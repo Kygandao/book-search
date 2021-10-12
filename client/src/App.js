@@ -15,16 +15,16 @@ const client = new ApolloClient({
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        authorization: localStorage.getItem('token') || null,
+        authorization: token ? `Bearer ${token}` : ''
       }
     }))
-  }
+  },
 })
 
 
 function App() {
   return (
-    <ApolloProvider>
+    <ApolloProvider client={client}>
       <Router>
         <>
           <Navbar />
