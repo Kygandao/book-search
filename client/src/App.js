@@ -1,40 +1,39 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
+
 import SearchBooks from './pages/SearchBooks';
 import SavedBooks from './pages/SavedBooks';
 import Navbar from './components/Navbar';
 
-//Apollo imports
-import ApolloClient from 'apollo-boost'
-import { ApolloProvider } from '@apollo/react-hooks'
-
-//Create Client
 const client = new ApolloClient({
+  cache: new InMemoryCache(),
   request: operation => {
-    const token = localStorage.getItem('id-token')
+    const token = localStorage.getItem("id-token")
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        authorization: token ? `Bearer ${token}` : ''
+        authorization: localStorage.getItem(token) || '',
       }
     }))
-  },
+  }
 })
-
 
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Router>
-        <>
-          <Navbar />
-          <Switch>
-            <Route exact path='/' component={SearchBooks} />
-            <Route exact path='/saved' component={SavedBooks} />
-            <Route render={() => <h1 className='display-2'>Wrong page!</h1>} />
-          </Switch>
-        </>
-      </Router>
+    <Router>
+      <>
+        <Navbar />
+        <Switch>
+          <Route exact path='/' component={SearchBooks} />
+          <Route exact path='/saved' component={SavedBooks} />
+          <Route render={() => <h1 className='display-2'>Wrong page!</h1>} />
+        </Switch>
+      </>
+    </Router>
     </ApolloProvider>
   );
 }
